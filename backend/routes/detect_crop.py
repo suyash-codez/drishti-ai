@@ -75,21 +75,25 @@ HINDI_CLASS_NAMES = {
     "Tomato___healthy": "टमाटर — स्वस्थ पत्ता (Healthy)",
 }
 
-# Load model once at startup
-print(f"[detect_crop] Loading model {MODEL_ID}...")
-try:
-    model = AutoModelForImageClassification.from_pretrained(MODEL_ID)
-    model.eval()
+# Single-threaded lightweight CPU settings to stay under 512MB RAM
+torch.set_num_threads(1)
+model = None
 
-    # Quick warmup inference
-    _dummy = Image.new("RGB", (224, 224), color=(100, 150, 50))
-    _tensor = transform(_dummy).unsqueeze(0)
-    with torch.no_grad():
-        _ = model(_tensor)
-    print(f"[detect_crop] Model {MODEL_ID} loaded and warmed up successfully.")
-except Exception as e:
-    print(f"[detect_crop] Warning: Error loading model {MODEL_ID}: {e}")
-    model = None
+def get_model():
+    global model
+    if model is None:
+        print(f"[detect_crop] Loading model {MODEL_ID} on demand...")
+        try:
+            model = AutoModelForImageClassification.from_pretrained(
+                MODEL_ID,
+                low_cpu_mem_usage=True
+            )
+            model.eval()
+            print(f"[detect_crop] Model {MODEL_ID} loaded successfully.")
+        except Exception as e:
+            print(f"[detect_crop] Error loading model {MODEL_ID}: {e}")
+            model = None
+    return model
 
 @router.post("/detect-crop", response_model=DiseaseDetectionResponse)
 async def detect_crop_disease(
@@ -121,10 +125,11 @@ async def detect_crop_disease(
             detail=f"Cannot decode file as an image: {str(e)}"
         )
 
-    if model is None:
+    active_model = get_model()
+    if active_model is None:
         raise HTTPException(
             status_code=500,
-            detail="Model is not initialized."
+            detail="Vision model is currently initializing. Please retry in a few moments."
         )
 
     # 4. Preprocess
@@ -133,13 +138,13 @@ async def detect_crop_disease(
     # 5. Measure inference time
     start_time = time.time()
     with torch.no_grad():
-        outputs = model(img_tensor)
+        outputs = active_model(img_tensor)
         probs = torch.softmax(outputs.logits, dim=1)[0]
         top_idx = torch.argmax(probs).item()
         confidence = round(float(probs[top_idx].item()), 4)
 
     inference_time_ms = round((time.time() - start_time) * 1000, 2)
-    prediction = model.config.id2label.get(top_idx, str(top_idx))
+    prediction = active_model.config.id2label.get(top_idx, str(top_idx))
 
     # Clean label formatting
     clean_label_en = prediction.replace("___", " - ").replace("_", " ")

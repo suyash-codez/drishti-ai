@@ -1,3 +1,6 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch
+torchvision
 fastapi>=0.110.0
 uvicorn>=0.28.0
 scikit-learn>=1.4.0
@@ -10,8 +13,6 @@ supabase>=2.3.0
 pydantic>=2.6.0
 sarvamai
 python-dotenv
-torch
-torchvision
 timm
 safetensors
 huggingface_hub
