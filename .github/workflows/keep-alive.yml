@@ -1,0 +1,17 @@
+name: Keep Render Backend Alive
+
+on:
+  schedule:
+    # Runs every 10 minutes
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Backend Health Endpoint
+        run: |
+          echo "Pinging DRISHTI Backend..."
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "https://drishti-backend-xm3m.onrender.com/health")
+          echo "Response HTTP Status: $HTTP_STATUS"
