@@ -1,7 +1,12 @@
 # 🌾 DRISHTI AI — Smart Krishi Sahayak
 > **"Drishti" (दृष्टि)** means *foresight and vision*. DRISHTI empowers Indian smallholder farmers with forecast-aware precision farming, explainable ML advisories, instant crop disease vision diagnosis, and voice-first vernacular assistance.
 
-[![Live Backend](https://img.shields.io/badge/Render-Backend%20Live-brightgreen.svg)](https://drishti-backend-xm3m.onrender.com/health)
+[![Live Web App](https://img.shields.io/badge/🌐_Live_App-drishti--ai--lemon.vercel.app-2ea44f?style=for-the-badge&logo=vercel)](https://drishti-ai-lemon.vercel.app/)
+[![Live Backend API](https://img.shields.io/badge/⚡_Live_API-Render_Cloud-009688?style=for-the-badge&logo=render)](https://drishti-backend-xm3m.onrender.com/health)
+
+> 🚀 **Live Demo:** [https://drishti-ai-lemon.vercel.app](https://drishti-ai-lemon.vercel.app)  
+> 📡 **Live API (Render):** [https://drishti-backend-xm3m.onrender.com](https://drishti-backend-xm3m.onrender.com/health)
+
 [![Next.js](https://img.shields.io/badge/Frontend-Next.js%2016-black.svg)](https://nextjs.org)
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI%200.110-009688.svg)](https://fastapi.tiangolo.com)
 [![PyTorch](https://img.shields.io/badge/Vision-PyTorch%20ResNet50-EE4C2C.svg)](https://pytorch.org)
